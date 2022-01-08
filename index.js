@@ -38,7 +38,25 @@ class Player {
     }
 }
 
+class Platform {
+    constructor() {
+        this.position = {
+            x: 200,
+            y: 100
+        }
+        this.width = 200
+        this.height = 20
+    }
+
+    draw() {
+        context.fillStyle = 'blue'
+        context.fillRect(this.position.x, this.position.y, this.width, this.height)
+    }
+}
+
 const player = new Player()
+const platform = new Platform()
+
 const keys = {
     right: {
         pressed: false
@@ -52,6 +70,7 @@ function animate() {
     requestAnimationFrame(animate)
     context.clearRect(0, 0, canvas.width, canvas.height)
     player.update()
+    platform.draw()
 
     if (keys.right.pressed) {
         player.velocity.x = 5
@@ -59,6 +78,15 @@ function animate() {
         player.velocity.x = -5
     } else {
         player.velocity.x = 0
+    }
+
+    // platform collision detection
+    if (player.position.y + player.height <= platform.position.y 
+        && player.position.y + player.height + player.velocity.y >= platform.position.y
+        && player.position.x + player.width >= platform.position.x
+        && player.position.x <= platform.position.x + platform.width
+    ) {
+        player.velocity.y = 0
     }
 } 
 animate()
