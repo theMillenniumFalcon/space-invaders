@@ -12,11 +12,11 @@ canvas.height = 576
 const gravity = .5
 
 class Player {
-    constructor() {
-        this.position = {
-            x: 100,
-            y: 100
-        }
+  constructor() {
+    this.position = {
+      x: 100,
+      y: 100
+    }
     this.velocity = {
       x: 0,
       y: 0
@@ -37,8 +37,6 @@ class Player {
 
     if (this.position.y + this.height + this.velocity.y <= canvas.height) {
       this.velocity.y += gravity
-    } else {
-      this.velocity.y = 0
     }
   }
 }
@@ -85,14 +83,15 @@ function createImage(imageSrc) {
   return image
 }
 
-const platformImg = createImage(platform)
+let platformImg = createImage(platform)
 
-const player = new Player()
-const platforms = [
+let player = new Player()
+let platforms = [
   new Platform({ x: -1, y: 470, image: platformImg }),
   new Platform({ x: platformImg.width - 3, y: 470, image: platformImg }),
+  new Platform({ x: platformImg.width * 2 - 3 + 100, y: 470, image: platformImg })
 ]
-const genericObjects = [
+let genericObjects = [
   new GenericObject({ x: -1, y: -1, image: createImage(background) }),
   new GenericObject({ x: -1, y: 0, image: createImage(hills) })
 ]
@@ -107,6 +106,24 @@ const keys = {
 }
 
 let scrollOffset = 0
+
+function init() {
+  platformImg = createImage(platform)
+
+  player = new Player()
+  platforms = [
+    new Platform({ x: -1, y: 470, image: platformImg }),
+    new Platform({ x: platformImg.width - 3, y: 470, image: platformImg }),
+    new Platform({ x: platformImg.width * 2 - 3 + 100, y: 470, image: platformImg })
+  ]
+  genericObjects = [
+    new GenericObject({ x: -1, y: -1, image: createImage(background) }),
+    new GenericObject({ x: -1, y: 0, image: createImage(hills) })
+  ]
+
+  scrollOffset = 0
+}
+
 
 function animate() {
   requestAnimationFrame(animate)
@@ -157,8 +174,14 @@ function animate() {
     }
   })
 
+  // Win condition
   if (scrollOffset > 2000) {
     console.log('YOU WIN!!!')
+  }
+
+  // Loose condition
+  if (player.position.y > canvas.height) {
+    init()
   }
 
 }
@@ -204,8 +227,8 @@ window.addEventListener('keyup', ({ keyCode }) => {
       break
 
     case 87:
-        console.log('up')
-        player.velocity.y -= 20
-        break
-    }
+      console.log('up')
+      player.velocity.y -= 20
+      break
+  }
 })
