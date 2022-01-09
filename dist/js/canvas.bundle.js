@@ -138,6 +138,19 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./src/assets/spriteStandRight.png":
+/*!*****************************************!*\
+  !*** ./src/assets/spriteStandRight.png ***!
+  \*****************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = (__webpack_require__.p + "01e8f15e899155c68950c40e0a6b8df0.png");
+
+/***/ }),
+
 /***/ "./src/js/canvas.js":
 /*!**************************!*\
   !*** ./src/js/canvas.js ***!
@@ -151,6 +164,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _assets_hills_png__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../assets/hills.png */ "./src/assets/hills.png");
 /* harmony import */ var _assets_background_png__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../assets/background.png */ "./src/assets/background.png");
 /* harmony import */ var _assets_platformSmallTall_png__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../assets/platformSmallTall.png */ "./src/assets/platformSmallTall.png");
+/* harmony import */ var _assets_spriteStandRight_png__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../assets/spriteStandRight.png */ "./src/assets/spriteStandRight.png");
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -160,6 +174,10 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 /* eslint-disable indent */
 
 
+
+ // import spriteRunLeft from '../assets/spriteRunLeft.png'
+// import spriteRunRight from '../assets/spriteRunRight.png'
+// import spriteStandLeft from '../assets/spriteStandLeft.png'
 
 
 var canvas = document.querySelector('canvas');
@@ -181,19 +199,26 @@ var Player = /*#__PURE__*/function () {
       x: 0,
       y: 0
     };
-    this.width = 30;
-    this.height = 30;
+    this.width = 66;
+    this.height = 150;
+    this.image = createImage(_assets_spriteStandRight_png__WEBPACK_IMPORTED_MODULE_4__["default"]);
+    this.frames = 0;
   }
 
   _createClass(Player, [{
     key: "draw",
     value: function draw() {
-      context.fillStyle = 'red';
-      context.fillRect(this.position.x, this.position.y, this.width, this.height);
+      context.drawImage(this.image, 177 * this.frames, 0, 177, 400, this.position.x, this.position.y, this.width, this.height);
     }
   }, {
     key: "update",
     value: function update() {
+      this.frames++;
+
+      if (this.frames > 28) {
+        this.frames = 0;
+      }
+
       this.draw();
       this.position.x += this.velocity.x;
       this.position.y += this.velocity.y;

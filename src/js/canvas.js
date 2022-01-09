@@ -3,6 +3,10 @@ import platform from '../assets/platform.png'
 import hills from '../assets/hills.png'
 import background from '../assets/background.png'
 import platformSmallTall from '../assets/platformSmallTall.png'
+// import spriteRunLeft from '../assets/spriteRunLeft.png'
+// import spriteRunRight from '../assets/spriteRunRight.png'
+// import spriteStandLeft from '../assets/spriteStandLeft.png'
+import spriteStandRight from '../assets/spriteStandRight.png'
 
 const canvas = document.querySelector('canvas')
 const context = canvas.getContext('2d')
@@ -23,16 +27,21 @@ class Player {
       x: 0,
       y: 0
     }
-    this.width = 30
-    this.height = 30
+    this.width = 66
+    this.height = 150
+    this.image = createImage(spriteStandRight)
+    this.frames = 0
   }
 
   draw() {
-    context.fillStyle = 'red'
-    context.fillRect(this.position.x, this.position.y, this.width, this.height)
+    context.drawImage(this.image, 177 * this.frames, 0, 177, 400, this.position.x, this.position.y, this.width, this.height)
   }
 
   update() {
+    this.frames++
+    if (this.frames > 28) {
+      this.frames = 0
+    }
     this.draw()
     this.position.x += this.velocity.x
     this.position.y += this.velocity.y
