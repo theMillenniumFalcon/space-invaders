@@ -1,4 +1,7 @@
 /* eslint-disable indent */
+import platform from '../assets/platform.png'
+console.log(platform)
+
 const canvas = document.querySelector('canvas')
 const context = canvas.getContext('2d')
 
