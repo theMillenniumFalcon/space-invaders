@@ -138,6 +138,19 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./src/assets/spriteRunRight.png":
+/*!***************************************!*\
+  !*** ./src/assets/spriteRunRight.png ***!
+  \***************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = (__webpack_require__.p + "a2f75989924952a7e49ce0405d487c93.png");
+
+/***/ }),
+
 /***/ "./src/assets/spriteStandRight.png":
 /*!*****************************************!*\
   !*** ./src/assets/spriteStandRight.png ***!
@@ -164,7 +177,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _assets_hills_png__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../assets/hills.png */ "./src/assets/hills.png");
 /* harmony import */ var _assets_background_png__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../assets/background.png */ "./src/assets/background.png");
 /* harmony import */ var _assets_platformSmallTall_png__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../assets/platformSmallTall.png */ "./src/assets/platformSmallTall.png");
-/* harmony import */ var _assets_spriteStandRight_png__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../assets/spriteStandRight.png */ "./src/assets/spriteStandRight.png");
+/* harmony import */ var _assets_spriteRunRight_png__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../assets/spriteRunRight.png */ "./src/assets/spriteRunRight.png");
+/* harmony import */ var _assets_spriteStandRight_png__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../assets/spriteStandRight.png */ "./src/assets/spriteStandRight.png");
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -176,8 +190,8 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 
  // import spriteRunLeft from '../assets/spriteRunLeft.png'
-// import spriteRunRight from '../assets/spriteRunRight.png'
-// import spriteStandLeft from '../assets/spriteStandLeft.png'
+
+ // import spriteStandLeft from '../assets/spriteStandLeft.png'
 
 
 var canvas = document.querySelector('canvas');
@@ -201,14 +215,28 @@ var Player = /*#__PURE__*/function () {
     };
     this.width = 66;
     this.height = 150;
-    this.image = createImage(_assets_spriteStandRight_png__WEBPACK_IMPORTED_MODULE_4__["default"]);
+    this.image = createImage(_assets_spriteStandRight_png__WEBPACK_IMPORTED_MODULE_5__["default"]);
     this.frames = 0;
+    this.sprites = {
+      stand: {
+        right: createImage(_assets_spriteStandRight_png__WEBPACK_IMPORTED_MODULE_5__["default"]),
+        cropWidth: 177,
+        width: 66
+      },
+      run: {
+        right: createImage(_assets_spriteRunRight_png__WEBPACK_IMPORTED_MODULE_4__["default"]),
+        cropWidth: 340,
+        width: 127.875
+      }
+    };
+    this.currentSprite = this.sprites.stand.right;
+    this.currentCropWidth = 177;
   }
 
   _createClass(Player, [{
     key: "draw",
     value: function draw() {
-      context.drawImage(this.image, 177 * this.frames, 0, 177, 400, this.position.x, this.position.y, this.width, this.height);
+      context.drawImage(this.image, this.currentCropWidth * this.frames, 0, this.currentCropWidth, 400, this.position.x, this.position.y, this.width, this.height);
     }
   }, {
     key: "update",
@@ -424,6 +452,9 @@ window.addEventListener('keydown', function (_ref3) {
     case 68:
       console.log('right');
       keys.right.pressed = true;
+      player.currentSprite = player.sprites.run.right;
+      player.currentCropWidth = player.sprites.run.cropWidth;
+      player.width = player.sprites.run.width;
       break;
 
     case 87:

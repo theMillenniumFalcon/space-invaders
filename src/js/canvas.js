@@ -4,7 +4,7 @@ import hills from '../assets/hills.png'
 import background from '../assets/background.png'
 import platformSmallTall from '../assets/platformSmallTall.png'
 // import spriteRunLeft from '../assets/spriteRunLeft.png'
-// import spriteRunRight from '../assets/spriteRunRight.png'
+import spriteRunRight from '../assets/spriteRunRight.png'
 // import spriteStandLeft from '../assets/spriteStandLeft.png'
 import spriteStandRight from '../assets/spriteStandRight.png'
 
@@ -31,10 +31,25 @@ class Player {
     this.height = 150
     this.image = createImage(spriteStandRight)
     this.frames = 0
+    this.sprites = {
+      stand: {
+        right: createImage(spriteStandRight),
+        cropWidth: 177,
+        width: 66
+      },
+      run: {
+        right: createImage(spriteRunRight),
+        cropWidth: 340,
+        width: 127.875
+      }
+    }
+
+    this.currentSprite = this.sprites.stand.right
+    this.currentCropWidth = 177
   }
 
   draw() {
-    context.drawImage(this.image, 177 * this.frames, 0, 177, 400, this.position.x, this.position.y, this.width, this.height)
+    context.drawImage(this.image, this.currentCropWidth * this.frames, 0, this.currentCropWidth, 400, this.position.x, this.position.y, this.width, this.height)
   }
 
   update() {
@@ -211,6 +226,9 @@ window.addEventListener('keydown', ({ keyCode }) => {
     case 68:
       console.log('right')
       keys.right.pressed = true
+      player.currentSprite = player.sprites.run.right
+      player.currentCropWidth = player.sprites.run.cropWidth
+      player.width = player.sprites.run.width
       break
 
     case 87:
