@@ -77,11 +77,9 @@ class Platform {
       x: x,
       y: y
     }
-
     this.image = image
     this.width = image.width
     this.height = image.height
-
   }
 
   draw() {
