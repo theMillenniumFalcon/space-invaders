@@ -1,1 +1,1 @@
-This is a simple browser game made using html canvas
+This is a browser game made using html canvas
