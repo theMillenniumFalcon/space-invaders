@@ -1,8 +1,8 @@
 const canvas = document.querySelector('canvas')
 const context = canvas.getContext('2d')
 
-canvas.width = innerWidth
-canvas.height = innerHeight
+canvas.width = 1024
+canvas.height = 576
 
 class Player {
     constructor() {
@@ -11,6 +11,7 @@ class Player {
         }
 
         this.rotation = 0
+        this.opacity = 1
 
         const image = new Image()
         image.src = './assets/spaceship.png'
@@ -31,6 +32,7 @@ class Player {
         // context.fillRect(this.position.x, this.position.y, this.width, this.height)
 
         context.save()
+        context.globalAlpha = this.opacity
         context.translate(player.position.x + player.width / 2, player.position.y + player.height / 2)
         context.rotate(this.rotation)
         context.translate(-player.position.x - player.width / 2, -player.position.y - player.height / 2)
@@ -69,6 +71,38 @@ class Projectile {
     }
 }
 
+class Particle {
+    constructor({position, velocity, radius, color, fades}) {
+        this.position = position
+        this.velocity = velocity
+
+        this.radius = radius
+        this.color = color
+        this.opacity = 1
+        this.fades = fades
+    }
+
+    draw() {
+        context.save()
+        context.globalAlpha = this.opacity
+        context.beginPath()
+        context.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2)
+        context.fillStyle = this.color
+        context.fill()
+        context.closePath()
+        context.restore()
+    }
+
+    update() {
+        this.draw()
+        this.position.x += this.velocity.x
+        this.position.y += this.velocity.y
+
+        if (this.fades) {
+            this.opacity -= 0.01
+        }
+    }
+}
 
 class InvaderProjectile {
     constructor({position, velocity}) {
@@ -182,6 +216,7 @@ const player = new Player()
 const projectiles = []
 const grids = []
 const invaderProjectiles = []
+const particles = []
 
 const keys = {
     a: {
@@ -195,14 +230,67 @@ const keys = {
     },
 }
 
-let frames = 0
+frames = 0
 let randomInterval = Math.floor(Math.random() * 500 + 500)
+let game = {
+    over: false,
+    active: true
+}
+
+for (let i = 0; i < 100; i++) {
+    particles.push(new Particle({
+        position: {
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height
+        },
+        velocity: {
+            x: 0, 
+            y: 0.3
+        },
+        radius: Math.random() * 2,
+        color: 'white'
+    }))
+}
+
+function createParticles({object, color, fades}) {
+    for (let i = 0; i < 15; i++) {
+        particles.push(new Particle({
+            position: {
+                x: object.position.x + object.width / 2,
+                y: object.position.y + object.height / 2
+            },
+            velocity: {
+                x: (Math.random() - 0.5) * 2, 
+                y: (Math.random() - 0.5) * 2
+            },
+            radius: Math.random() * 3,
+            color: color || '#BAA0DE',
+            fades
+        }))
+    }
+}
 
 function animate() {
+    if (!game.active) return
     requestAnimationFrame(animate)
     context.fillStyle = 'black'
     context.fillRect(0, 0, canvas.width, canvas.height)
     player.update()
+    particles.forEach((particle, i) => {
+
+        if (particle.position.y - particle.radius >= canvas.height) {
+            particle.position.x = Math.random() * canvas.width
+            particle.position.y = -particle.radius
+        }
+        if (particle.opacity <= 0) {
+            setTimeout(() => {
+                particles.splice(i, 1)
+            }, 0)
+        } else {
+            particle.update()
+        }
+    })
+
     invaderProjectiles.forEach((invaderProjectile, index) => {
         if (invaderProjectile.position.y + invaderProjectile.height >= canvas.height) {
             setTimeout(() => {
@@ -211,10 +299,24 @@ function animate() {
         } else {
             invaderProjectile.update()
         }
+
+        //  * projectile hits player
         if (invaderProjectile.position.y + invaderProjectile.height >= player.position.y && 
             invaderProjectile.position.x + invaderProjectile.width >= player.position.x &&
             invaderProjectile.position.x <= player.position.x + player.width) {
-            console.log("YOU LOOSE!")
+            setTimeout(() => {
+                invaderProjectiles.splice(index, 1)
+                player.opacity = 0
+                game.over = true
+            }, 0)
+            setTimeout(() => {
+                game.active = false
+            }, 2000)
+            createParticles({
+                object: player,
+                color: 'white',
+                fades: true
+            })
         }
     })
 
@@ -239,16 +341,21 @@ function animate() {
         grid.invaders.forEach((invader, i) => {
             invader.update({velocity: grid.velocity})
 
+            // * projectile hit enemies
             projectiles.forEach((projectile, j) => {
                 if (projectile.position.y - projectile.radius <= invader.position.y + invader.height && 
                     projectile.position.x + projectile.radius >= invader.position.x &&
                     projectile.position.x - projectile.radius <= invader.position.x + invader.width &&
                     projectile.position.y + projectile.radius >= invader.position.y
-                    ) {
+                    ) {   
                     setTimeout(() => {
                         const invaderFound = grid.invaders.find((invader2) => invader2 === invader)
                         const projectileFound = projectiles.find((projectile2) => projectile2 === projectile)
                         if (invaderFound && projectileFound) {
+                            createParticles({
+                                object: invader,
+                                fades: true
+                            })
                             grid.invaders.splice(i, 1)
                             projectiles.splice(j, 1) 
 
@@ -292,6 +399,8 @@ function animate() {
 animate()
 
 addEventListener('keydown', ({ key }) => {
+    if (game.over) return
+
     switch (key) {
         case 'a':
             console.log('left')
